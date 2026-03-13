@@ -26,6 +26,8 @@ background:#e74c3c;
 color:white;
 border-radius:40px;
 box-shadow:0 10px 30px rgba(0,0,0,0.15);
+cursor:pointer;
+z-index:10;
 }
 
 canvas{
@@ -121,21 +123,25 @@ to{transform:scale(5);opacity:0}
 
 <script>
 
+window.addEventListener("load",()=>{
+
 const canvas=document.getElementById("c")
 const ctx=canvas.getContext("2d")
 const robot=document.getElementById("robot")
 const wheels=document.querySelectorAll(".wheel")
+const startBtn=document.getElementById("start")
 
 function resize(){
-canvas.width=innerWidth
-canvas.height=innerHeight
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
 }
 
 resize()
-addEventListener("resize",resize)
+window.addEventListener("resize",resize)
 
 let t=0
-let drawing=true
+let drawing=false
+let started=false
 let particles=[]
 
 function heart(t){
@@ -153,7 +159,7 @@ y:canvas.height/2 - y*scale
 
 function draw(){
 
-if(!drawing)return
+if(!drawing) return
 
 t+=0.03
 
@@ -163,9 +169,10 @@ ctx.lineWidth=4
 ctx.strokeStyle="#e74c3c"
 ctx.lineCap="round"
 
-if(t===0){
+if(!started){
 ctx.beginPath()
 ctx.moveTo(p.x,p.y)
+started=true
 }else{
 ctx.lineTo(p.x,p.y)
 ctx.stroke()
@@ -187,7 +194,9 @@ ctx.fill()
 
 prt.life-=0.02
 
-if(prt.life<=0)particles.splice(i,1)
+if(prt.life<=0){
+particles.splice(i,1)
+}
 
 }
 
@@ -213,7 +222,7 @@ function step(){
 x+=3
 robot.style.left=x+"px"
 
-if(x<innerWidth-80){
+if(x<window.innerWidth-80){
 requestAnimationFrame(step)
 }else{
 clickEffect()
@@ -229,8 +238,8 @@ function clickEffect(){
 
 const ripple=document.createElement("div")
 ripple.className="ripple"
-ripple.style.left=(innerWidth-90)+"px"
-ripple.style.top=(innerHeight/2)+"px"
+ripple.style.left=(window.innerWidth-90)+"px"
+ripple.style.top=(window.innerHeight/2)+"px"
 ripple.style.width="20px"
 ripple.style.height="20px"
 
@@ -275,17 +284,21 @@ typing()
 
 }
 
-document.getElementById("start").onclick=()=>{
+startBtn.addEventListener("click",()=>{
 
-document.getElementById("start").style.display="none"
+startBtn.style.display="none"
+
+drawing=true
+t=0
+started=false
 
 wheels.forEach(w=>w.style.animationPlayState="running")
 
-ctx.beginPath()
-
 draw()
 
-}
+})
+
+})
 
 </script>
 
