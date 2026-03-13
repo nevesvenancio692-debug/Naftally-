@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Para você ❤️</title>
+
+<style>
+body{
+background:#111;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+flex-direction:column;
+font-family:Arial;
+overflow:hidden;
+}
+
+canvas{
+border:2px solid white;
+background:black;
+}
+
+h1{
+margin-top:20px;
+color:red;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="canvas" width="400" height="300"></canvas>
+<h1 id="msg"></h1>
+
+<script>
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+let t = 0;
+
+function heart(t){
+let x = 16*Math.pow(Math.sin(t),3);
+let y = 13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
+return {x:x,y:y};
+}
+
+function draw(){
+
+ctx.fillStyle="black";
+ctx.fillRect(0,0,400,300);
+
+ctx.strokeStyle="red";
+ctx.lineWidth=2;
+ctx.beginPath();
+
+for(let i=0;i<t;i+=0.02){
+let h = heart(i);
+ctx.lineTo(200 + h.x*10,150 - h.y*10);
+}
+
+ctx.stroke();
+
+t += 0.02;
+
+if(t < Math.PI*2){
+requestAnimationFrame(draw);
+}else{
+document.getElementById("msg").innerHTML="Te amo Naftally ❤️";
+}
+
+}
+
+draw();
+
+</script>
+
+</body>
+</html>
