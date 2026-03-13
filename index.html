@@ -1,79 +1,291 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Para você ❤️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Naftally ❤️</title>
 
 <style>
+
 body{
-background:#111;
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-flex-direction:column;
-font-family:Arial;
+margin:0;
+background:#ffffff;
+font-family:system-ui;
 overflow:hidden;
 }
 
-canvas{
-border:2px solid white;
-background:black;
+#start{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+padding:18px 30px;
+font-size:20px;
+border:none;
+background:#e74c3c;
+color:white;
+border-radius:40px;
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
 }
 
-h1{
-margin-top:20px;
-color:red;
+canvas{
+position:absolute;
+top:0;
+left:0;
 }
+
+#robot{
+position:absolute;
+width:70px;
+height:70px;
+pointer-events:none;
+}
+
+.wheel{
+transform-origin:center;
+animation:spin .4s linear infinite;
+animation-play-state:paused;
+}
+
+@keyframes spin{
+from{transform:rotate(0)}
+to{transform:rotate(360deg)}
+}
+
+#message{
+position:absolute;
+top:15%;
+left:15%;
+width:70%;
+height:70%;
+font-size:17px;
+line-height:1.5;
+color:#333;
+display:none;
+text-align:center;
+}
+
+#text{
+white-space:pre-wrap;
+}
+
+.ripple{
+position:absolute;
+border-radius:50%;
+border:3px solid #e74c3c;
+animation:ripple 1s ease-out forwards;
+}
+
+@keyframes ripple{
+from{transform:scale(.2);opacity:1}
+to{transform:scale(5);opacity:0}
+}
+
 </style>
 </head>
 
 <body>
 
-<canvas id="canvas" width="400" height="300"></canvas>
-<h1 id="msg"></h1>
+<button id="start">Clique para ver 💝</button>
+
+<canvas id="c"></canvas>
+
+<div id="robot">
+
+<svg viewBox="0 0 100 100">
+
+<defs>
+<radialGradient id="metal">
+<stop offset="0%" stop-color="#ffffff"/>
+<stop offset="100%" stop-color="#bfc3c7"/>
+</radialGradient>
+</defs>
+
+<rect x="20" y="25" width="60" height="40" rx="12" fill="url(#metal)" stroke="#888"/>
+
+<circle cx="40" cy="45" r="6" fill="#e74c3c"/>
+<circle cx="60" cy="45" r="6" fill="#e74c3c"/>
+
+<rect x="48" y="65" width="4" height="20" fill="#333"/>
+
+<circle class="wheel" cx="35" cy="85" r="12" fill="#444"/>
+<circle class="wheel" cx="65" cy="85" r="12" fill="#444"/>
+
+</svg>
+
+</div>
+
+<div id="message">
+<div id="text"></div>
+</div>
 
 <script>
 
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+const canvas=document.getElementById("c")
+const ctx=canvas.getContext("2d")
+const robot=document.getElementById("robot")
+const wheels=document.querySelectorAll(".wheel")
 
-let t = 0;
+function resize(){
+canvas.width=innerWidth
+canvas.height=innerHeight
+}
+
+resize()
+addEventListener("resize",resize)
+
+let t=0
+let drawing=true
+let particles=[]
 
 function heart(t){
-let x = 16*Math.pow(Math.sin(t),3);
-let y = 13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
-return {x:x,y:y};
+
+const scale=10
+const x=16*Math.pow(Math.sin(t),3)
+const y=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t)
+
+return{
+x:canvas.width/2 + x*scale,
+y:canvas.height/2 - y*scale
+}
+
 }
 
 function draw(){
 
-ctx.fillStyle="black";
-ctx.fillRect(0,0,400,300);
+if(!drawing)return
 
-ctx.strokeStyle="red";
-ctx.lineWidth=2;
-ctx.beginPath();
+t+=0.03
 
-for(let i=0;i<t;i+=0.02){
-let h = heart(i);
-ctx.lineTo(200 + h.x*10,150 - h.y*10);
-}
+const p=heart(t)
 
-ctx.stroke();
+ctx.lineWidth=4
+ctx.strokeStyle="#e74c3c"
+ctx.lineCap="round"
 
-t += 0.02;
-
-if(t < Math.PI*2){
-requestAnimationFrame(draw);
+if(t===0){
+ctx.beginPath()
+ctx.moveTo(p.x,p.y)
 }else{
-document.getElementById("msg").innerHTML="Te amo Naftally ❤️";
+ctx.lineTo(p.x,p.y)
+ctx.stroke()
+}
+
+robot.style.left=(p.x-35)+"px"
+robot.style.top=(p.y-35)+"px"
+
+particles.push({x:p.x,y:p.y,life:1})
+
+for(let i=particles.length-1;i>=0;i--){
+
+const prt=particles[i]
+
+ctx.beginPath()
+ctx.arc(prt.x,prt.y,2,0,Math.PI*2)
+ctx.fillStyle="rgba(231,76,60,"+prt.life+")"
+ctx.fill()
+
+prt.life-=0.02
+
+if(prt.life<=0)particles.splice(i,1)
+
+}
+
+if(t<Math.PI*2){
+requestAnimationFrame(draw)
+}else{
+
+drawing=false
+wheels.forEach(w=>w.style.animationPlayState="paused")
+
+setTimeout(moveRight,600)
+
+}
+
+}
+
+function moveRight(){
+
+let x=robot.offsetLeft
+
+function step(){
+
+x+=3
+robot.style.left=x+"px"
+
+if(x<innerWidth-80){
+requestAnimationFrame(step)
+}else{
+clickEffect()
 }
 
 }
 
-draw();
+step()
+
+}
+
+function clickEffect(){
+
+const ripple=document.createElement("div")
+ripple.className="ripple"
+ripple.style.left=(innerWidth-90)+"px"
+ripple.style.top=(innerHeight/2)+"px"
+ripple.style.width="20px"
+ripple.style.height="20px"
+
+document.body.appendChild(ripple)
+
+setTimeout(typeMessage,700)
+
+}
+
+const message=`Naftally,
+
+Mesmo a gente se conhecendo há poucos dias, você já conseguiu se tornar alguém muito especial para mim.
+Seu jeito, seu sorriso e a forma como você fala comigo fazem meus dias ficarem melhores.
+
+Ainda estamos no começo, mas eu já gosto muito de ter você por perto.
+
+Te amo. ❤️`
+
+function typeMessage(){
+
+const box=document.getElementById("message")
+const text=document.getElementById("text")
+
+box.style.display="block"
+
+let i=0
+
+function typing(){
+
+if(i<message.length){
+
+text.innerHTML+=message[i]
+i++
+
+setTimeout(typing,35)
+
+}
+
+}
+
+typing()
+
+}
+
+document.getElementById("start").onclick=()=>{
+
+document.getElementById("start").style.display="none"
+
+wheels.forEach(w=>w.style.animationPlayState="running")
+
+ctx.beginPath()
+
+draw()
+
+}
 
 </script>
 
