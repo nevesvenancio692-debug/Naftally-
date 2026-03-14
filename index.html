@@ -1,271 +1,657 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Para Naftally 💝</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naftally - Meu Amor</title>
     <style>
-        :root {
-            --red: #e74c3c;
-            --gray: #7f8c8d;
-            --dark-gray: #2c3e50;
-        }
-
-        body, html {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
             width: 100%;
             height: 100%;
+            background: #000;
+            font-family: 'Arial', sans-serif;
             overflow: hidden;
-            background-color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        #canvas-container {
+        .main-container {
+            width: 100%;
+            height: 100%;
             position: relative;
-            width: 100vw;
-            height: 100vh;
+        }
+
+        /* Background gradient */
+        .bg-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #0a0a1a, #1a0a2e, #2d1b4e, #0a0a1a);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+            z-index: 1;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Screen 1 - Initial */
+        .screen-initial {
+            position: absolute;
+            width: 100%;
+            height: 100%;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            z-index: 50;
+            opacity: 1;
+            transition: opacity 1.5s ease;
         }
 
-        /* Botão Inicial */
-        #start-btn {
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            background-color: var(--red);
+        .screen-initial.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .title {
+            font-size: 90px;
+            font-weight: 900;
+            color: #ff6b9d;
+            margin-bottom: 50px;
+            text-align: center;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(255, 107, 157, 0.8);
+            animation: glow-title 2s ease-in-out infinite;
+        }
+
+        @keyframes glow-title {
+            0%, 100% {
+                text-shadow: 0 0 30px rgba(255, 107, 157, 0.8);
+            }
+            50% {
+                text-shadow: 0 0 60px rgba(255, 107, 157, 1), 0 0 90px rgba(255, 50, 150, 0.7);
+            }
+        }
+
+        .subtitle {
+            font-size: 26px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 100px;
+            text-align: center;
+            line-height: 1.6;
+            max-width: 800px;
+            animation: slide-in 1.5s ease;
+            text-shadow: 0 0 15px rgba(255, 107, 157, 0.3);
+        }
+
+        @keyframes slide-in {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-begin {
+            padding: 20px 90px;
+            font-size: 22px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #ff6b9d 100%);
+            background-size: 300% 300%;
             color: white;
-            border: none;
+            border: 3px solid rgba(255, 107, 157, 0.8);
             border-radius: 50px;
             cursor: pointer;
-            z-index: 100;
-            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
-            transition: transform 0.2s;
+            box-shadow: 
+                0 0 50px rgba(255, 107, 157, 0.7),
+                0 0 100px rgba(255, 107, 157, 0.4),
+                inset 0 0 30px rgba(255, 255, 255, 0.2);
+            animation: button-glow 2.5s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
         }
 
-        #start-btn:active {
+        @keyframes button-glow {
+            0%, 100% {
+                box-shadow: 
+                    0 0 50px rgba(255, 107, 157, 0.7),
+                    0 0 100px rgba(255, 107, 157, 0.4),
+                    inset 0 0 30px rgba(255, 255, 255, 0.2);
+            }
+            50% {
+                box-shadow: 
+                    0 0 80px rgba(255, 107, 157, 1),
+                    0 0 150px rgba(255, 107, 157, 0.6),
+                    inset 0 0 50px rgba(255, 255, 255, 0.4);
+            }
+        }
+
+        .btn-begin:hover {
+            transform: scale(1.1) translateY(-3px);
+            background-position: 100% 100%;
+        }
+
+        .btn-begin:active {
             transform: scale(0.95);
         }
 
-        /* Elementos SVG */
-        #main-svg {
+        .btn-begin::before {
+            content: '';
             position: absolute;
             top: 0;
-            left: 0;
+            left: -100%;
             width: 100%;
             height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn-begin:hover::before {
+            left: 100%;
+        }
+
+        /* Screen 2 - Story */
+        .screen-story {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 60;
+            opacity: 0;
+            transition: opacity 2s ease;
             pointer-events: none;
-        }
-
-        /* Coração */
-        #heart-path {
-            fill: none;
-            stroke: var(--red);
-            stroke-width: 5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            stroke-dasharray: 1000;
-            stroke-dashoffset: 1000;
-        }
-
-        /* Robô */
-        #robot {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            display: none;
-            transform-origin: center;
-            z-index: 10;
-        }
-
-        .wheel {
-            fill: var(--dark-gray);
-        }
-
-        .spinning {
-            animation: spin 0.5s linear infinite;
-            transform-origin: center;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* Texto dentro do coração */
-        #text-container {
-            position: absolute;
-            width: 280px; /* Ajustado para caber no coração mobile */
-            height: 250px;
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+
+        .screen-story.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .story-image {
+            position: relative;
+            width: 80%;
+            max-width: 700px;
+            height: 65%;
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.2), rgba(196, 69, 105, 0.2));
+            border-radius: 30px;
+            border: 3px solid #ff6b9d;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 
+                0 0 80px rgba(255, 107, 157, 0.5),
+                0 0 160px rgba(255, 107, 157, 0.3),
+                inset 0 0 60px rgba(255, 107, 157, 0.1);
+            animation: story-appear 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes story-appear {
+            from {
+                opacity: 0;
+                transform: scale(0.6) rotateY(90deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotateY(0);
+            }
+        }
+
+        .story-text {
+            font-size: 36px;
+            color: #ff6b9d;
             text-align: center;
-            pointer-events: none;
-            clip-path: url(#heart-clip); /* Máscara do coração */
+            padding: 50px;
+            line-height: 1.8;
+            text-shadow: 0 0 30px rgba(255, 107, 157, 0.6);
+            position: relative;
+            z-index: 2;
+            font-weight: bold;
         }
 
-        #message {
-            color: var(--dark-gray);
-            font-size: 0.9rem;
-            line-height: 1.4;
-            padding: 20px;
-            font-weight: 500;
-            opacity: 0;
+        .loading-dots {
+            display: flex;
+            gap: 15px;
+            margin-top: 60px;
+            justify-content: center;
+            align-items: flex-end;
+            position: relative;
+            z-index: 2;
         }
 
-        /* Efeito de Clique */
-        .ripple {
-            position: absolute;
-            border: 2px solid var(--red);
+        .dot {
+            width: 14px;
+            height: 14px;
+            background: #ff6b9d;
             border-radius: 50%;
-            transform: scale(0);
-            animation: ripple-effect 0.6s ease-out;
+            animation: bounce-dot 1.4s infinite;
+            box-shadow: 0 0 15px #ff6b9d;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce-dot {
+            0%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-30px);
+            }
+        }
+
+        /* Screen 3 - Message */
+        .screen-message {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 70;
+            opacity: 0;
+            transition: opacity 2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             pointer-events: none;
         }
 
-        @keyframes ripple-effect {
-            to { transform: scale(4); opacity: 0; }
+        .screen-message.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .message-card {
+            position: relative;
+            max-width: 85%;
+            max-height: 85%;
+            background: rgba(10, 10, 26, 0.95);
+            backdrop-filter: blur(15px);
+            border: 3px solid #ff6b9d;
+            border-radius: 40px;
+            padding: 70px;
+            overflow-y: auto;
+            box-shadow: 
+                0 0 100px rgba(255, 107, 157, 0.5),
+                0 0 200px rgba(196, 69, 105, 0.3),
+                inset 0 0 80px rgba(255, 107, 157, 0.08);
+            animation: card-enter 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes card-enter {
+            from {
+                opacity: 0;
+                transform: scale(0.6) rotateX(90deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotateX(0);
+            }
+        }
+
+        .message-title {
+            font-size: 48px;
+            font-weight: bold;
+            color: #ff6b9d;
+            margin-bottom: 50px;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(255, 107, 157, 0.6);
+            letter-spacing: 2px;
+            animation: title-enter 1s ease 0.3s backwards;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes title-enter {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-text {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.92);
+            line-height: 2;
+            text-align: center;
+            white-space: pre-line;
+            text-shadow: 0 0 15px rgba(255, 107, 157, 0.3);
+            animation: text-enter 1s ease 0.5s backwards;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes text-enter {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .heart-emoji {
+            display: inline-block;
+            font-size: 32px;
+            animation: heart-beat 1.3s ease-in-out infinite;
+            margin: 0 5px;
+        }
+
+        @keyframes heart-beat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.4);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            75% {
+                transform: scale(1.35);
+            }
+        }
+
+        /* Floating hearts */
+        .heart-float {
+            position: fixed;
+            font-size: 40px;
+            opacity: 0;
+            animation: float-heart 4s ease-out forwards;
+            pointer-events: none;
+            z-index: 75;
+            filter: drop-shadow(0 0 10px rgba(255, 107, 157, 0.8));
+        }
+
+        @keyframes float-heart {
+            0% {
+                opacity: 0;
+                transform: translateY(0) translateX(0) scale(1) rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-500px) translateX(var(--tx)) scale(0.3) rotate(720deg);
+            }
+        }
+
+        /* Scrollbar */
+        .message-card::-webkit-scrollbar {
+            width: 14px;
+        }
+
+        .message-card::-webkit-scrollbar-track {
+            background: rgba(255, 107, 157, 0.1);
+            border-radius: 10px;
+        }
+
+        .message-card::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #ff6b9d, #c44569);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 107, 157, 0.5);
+        }
+
+        .message-card::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #ff8faf, #e055ae);
+            box-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .title {
+                font-size: 70px;
+            }
+
+            .subtitle {
+                font-size: 22px;
+            }
+
+            .btn-begin {
+                padding: 18px 70px;
+                font-size: 20px;
+            }
+
+            .message-card {
+                padding: 50px;
+            }
+
+            .message-title {
+                font-size: 36px;
+            }
+
+            .message-text {
+                font-size: 18px;
+                line-height: 1.8;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 50px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+                margin-bottom: 60px;
+            }
+
+            .btn-begin {
+                padding: 16px 50px;
+                font-size: 18px;
+            }
+
+            .message-card {
+                padding: 40px;
+                max-width: 92%;
+                border-radius: 25px;
+            }
+
+            .message-title {
+                font-size: 28px;
+                margin-bottom: 30px;
+            }
+
+            .message-text {
+                font-size: 16px;
+                line-height: 1.7;
+            }
+
+            .story-text {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 36px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+                margin-bottom: 40px;
+            }
+
+            .btn-begin {
+                padding: 14px 35px;
+                font-size: 16px;
+            }
+
+            .story-image {
+                width: 92%;
+                height: 55%;
+                border-radius: 20px;
+            }
+
+            .story-text {
+                font-size: 20px;
+                padding: 35px;
+            }
+
+            .message-card {
+                padding: 30px;
+                max-width: 96%;
+                border-radius: 20px;
+            }
+
+            .message-title {
+                font-size: 24px;
+                margin-bottom: 25px;
+            }
+
+            .message-text {
+                font-size: 15px;
+                line-height: 1.6;
+            }
+
+            .heart-emoji {
+                font-size: 26px;
+            }
+
+            .heart-float {
+                font-size: 32px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="main-container">
+        <div class="bg-effect"></div>
 
-<div id="canvas-container">
-    <button id="start-btn">Clique para ver 💝</button>
+        <!-- Screen 1 -->
+        <div class="screen-initial" id="screen1">
+            <div class="title">Naftally</div>
+            <div class="subtitle">
+                Quero te contar uma história<br>
+                sobre o que você significa para mim
+            </div>
+            <button class="btn-begin" id="btnBegin">Começar 💕</button>
+        </div>
 
-    <div id="text-container">
-        <div id="message"></div>
+        <!-- Screen 2 -->
+        <div class="screen-story" id="screen2">
+            <div class="story-image">
+                <div class="story-text">Conhecer você foi<br>como encontrar uma luz<br>no meio da escuridão</div>
+                <div class="loading-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 3 -->
+        <div class="screen-message" id="screen3">
+            <div class="message-card">
+                <div class="message-title">Naftally</div>
+                <div class="message-text" id="finalMessage"></div>
+            </div>
+        </div>
     </div>
 
-    <svg id="main-svg">
-        <defs>
-            <clipPath id="heart-clip">
-                <path d="M150,80 C150,80 130,30 80,30 C30,30 30,100 30,100 C30,140 150,230 150,230 C150,230 270,140 270,100 C270,100 270,30 220,30 C170,30 150,80 150,80 Z" transform="scale(1.1) translate(-15, -15)"></path>
-            </clipPath>
-        </defs>
-        <path id="heart-path" d="M150,80 C150,80 130,30 80,30 C30,30 30,100 30,100 C30,140 150,230 150,230 C150,230 270,140 270,100 C270,100 270,30 220,30 C170,30 150,80 150,80 Z" />
-    </svg>
+    <script>
+        const screen1 = document.getElementById('screen1');
+        const screen2 = document.getElementById('screen2');
+        const screen3 = document.getElementById('screen3');
+        const btnBegin = document.getElementById('btnBegin');
+        const finalMessage = document.getElementById('finalMessage');
 
-    <div id="robot">
-        <svg viewBox="0 0 100 100">
-            <rect x="25" y="20" width="50" height="45" rx="5" fill="#bdc3c7" />
-            <rect x="30" y="25" width="40" height="30" rx="2" fill="#ecf0f1" />
-            <circle cx="50" cy="40" r="5" fill="#e74c3c" />
-            <rect x="35" y="15" width="30" height="5" fill="#e74c3c" />
-            <g class="wheel-group">
-                <circle class="wheel spinning" cx="30" cy="70" r="10" />
-                <line x1="25" y1="70" x2="35" y2="70" stroke="white" stroke-width="2" />
-            </g>
-            <g class="wheel-group">
-                <circle class="wheel spinning" cx="70" cy="70" r="10" />
-                <line x1="65" y1="70" x2="75" y2="70" stroke="white" stroke-width="2" />
-            </g>
-            <rect id="arm" x="75" y="35" width="20" height="8" rx="4" fill="#7f8c8d" transform-origin="75 39" />
-            <path d="M50,65 L50,85" stroke="#2c3e50" stroke-width="3" />
-        </svg>
-    </div>
-</div>
+        const fullMessage = `Mesmo a gente se conhecendo há poucos dias,
+você já conseguiu se tornar alguém muito 
+especial para mim.
 
-<script>
-    const startBtn = document.getElementById('start-btn');
-    const robot = document.getElementById('robot');
-    const heartPath = document.getElementById('heart-path');
-    const messageDiv = document.getElementById('message');
-    const arm = document.getElementById('arm');
-    const wheels = document.querySelectorAll('.wheel');
+Seu jeito, seu sorriso e a forma como você 
+fala comigo fazem meus dias ficarem melhores.
 
-    const fullMessage = "Naftally,\n\nMesmo a gente se conhecendo há poucos dias, você já conseguiu se tornar alguém muito especial para mim. Seu jeito, seu sorriso e a forma como você fala comigo fazem meus dias ficarem melhores.\n\nAinda estamos no começo, mas eu já gosto muito de ter você por perto.\n\nTe amo. ❤️";
+Ainda estamos no começo, mas eu já gosto 
+muito de ter você por perto.
 
-    function typeWriter(text, i, fnCallback) {
-        if (i < text.length) {
-            messageDiv.innerHTML = text.substring(0, i + 1).replace(/\n/g, '<br>');
-            setTimeout(() => typeWriter(text, i + 1, fnCallback), 40);
-        } else if (typeof fnCallback == 'function') {
-            fnCallback();
-        }
-    }
+Te amo. ❤️`;
 
-    startBtn.addEventListener('click', () => {
-        startBtn.style.display = 'none';
-        robot.style.display = 'block';
-        
-        const pathLength = heartPath.getTotalLength();
-        heartPath.style.strokeDasharray = pathLength;
-        heartPath.style.strokeDashoffset = pathLength;
-
-        let progress = 0;
-        const duration = 5000; // 5 segundos para desenhar
-        const startTime = performance.now();
-
-        function animate(time) {
-            let elapsed = time - startTime;
-            progress = Math.min(elapsed / duration, 1);
-
-            // Move o robô ao longo do path
-            const point = heartPath.getPointAtLength(progress * pathLength);
-            const containerRect = document.getElementById('main-svg').getBoundingClientRect();
-            
-            // Centraliza o robô no desenho
-            robot.style.left = `${point.x - 30}px`;
-            robot.style.top = `${point.y - 45}px`;
-
-            // Desenha a linha
-            heartPath.style.strokeDashoffset = pathLength * (1 - progress);
-
-            if (progress < 1) {
-                requestAnimationFrame(animate);
-            } else {
-                // Para as rodas e vai para a lateral
-                wheels.forEach(w => w.classList.remove('spinning'));
-                setTimeout(moveAside, 500);
+        // Create floating hearts
+        function createFloatingHearts() {
+            const emojis = ['❤️', '💕', '💖', '💗', '💓'];
+            for (let i = 0; i < 25; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart-float';
+                    heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    heart.style.left = Math.random() * window.innerWidth + 'px';
+                    heart.style.top = window.innerHeight - 50 + 'px';
+                    heart.style.setProperty('--tx', (Math.random() - 0.5) * 400 + 'px');
+                    document.body.appendChild(heart);
+                    setTimeout(() => heart.remove(), 4000);
+                }, i * 120);
             }
         }
 
-        requestAnimationFrame(animate);
-    });
+        // Typewriter
+        function typeMessage() {
+            finalMessage.textContent = '';
+            let index = 0;
 
-    function moveAside() {
-        wheels.forEach(w => w.classList.add('spinning'));
-        const targetX = window.innerWidth - 70;
-        const currentTop = parseFloat(robot.style.top);
-        
-        robot.style.transition = "left 2s ease-in-out";
-        robot.style.left = `${targetX}px`;
+            const type = () => {
+                if (index < fullMessage.length) {
+                    const char = fullMessage[index];
+                    finalMessage.textContent += char;
+                    index++;
+                    setTimeout(type, 30);
+                } else {
+                    createFloatingHearts();
+                }
+            };
 
-        setTimeout(() => {
-            wheels.forEach(w => w.classList.remove('spinning'));
-            raiseArm();
-        }, 2000);
-    }
+            type();
+        }
 
-    function raiseArm() {
-        arm.style.transition = "transform 0.5s ease";
-        arm.style.transform = "rotate(-45deg)";
-        
-        setTimeout(() => {
-            createRipple(window.innerWidth - 10, parseFloat(robot.style.top) + 40);
-            arm.style.transform = "rotate(0deg)";
+        // Button click - CORRECTED
+        btnBegin.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Botão clicado!');
             
-            // Começa o texto
-            messageDiv.style.opacity = "1";
-            typeWriter(fullMessage, 0);
-        }, 600);
-    }
+            screen1.classList.add('hidden');
 
-    function createRipple(x, y) {
-        const ripple = document.createElement('div');
-        ripple.className = 'ripple';
-        ripple.style.left = `${x - 20}px`;
-        ripple.style.top = `${y - 20}px`;
-        ripple.style.width = '40px';
-        ripple.style.height = '40px';
-        document.body.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 600);
-    }
+            setTimeout(() => {
+                screen2.classList.add('visible');
+                console.log('Screen 2 visível');
+            }, 500);
 
-</script>
-
+            setTimeout(() => {
+                screen2.classList.remove('visible');
+                screen3.classList.add('visible');
+                console.log('Screen 3 visível');
+                typeMessage();
+            }, 6000);
+        });
+    </script>
 </body>
 </html>
